@@ -1,22 +1,37 @@
-import express , {Request, Response} from "express"
-const app = express()
-const port = 3000
+import express, { Request, Response } from "express";
+import mongoose from "mongoose";
+import User from "./models/User";
+const app = express();
+const port = 3000;
 
-app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.set("view engine", "ejs")
+mongoose
+  .connect("mongodb://admin:1234@localhost:27017/ivtb-22?authSource=admin")
+  .then(() => console.log("DB connected!"))
+  .catch((err) => console.error(err));
 
-app.get('/ejs-pages', (req: Request, res: Response) => {
-  res.render('layout', {message: "My message 123123123123123", title: "My page",content: "index"})
-})
+app.post("/users", async (req: Request, res: Response) => {
+  try {
+    console.log(req.body)
+    const user = new User(req.body)
+    await user.save()
+    res.status(201).json(user)
+  } catch (e) {
+    res.status(400).json({message: (e as Error).message})
+  }
+});
 
-app.post('/', (req: Request, res: Response) => {
-  console.log(req.body)
-  console.log(req.headers)
-  res.send('Hello World!xvcbxvbxcvb')
-})
+app.get("/users", async (req: Request, res: Response) => {
+  try {
+    const users = await User.find()
+    res.status(201).json(users)
+  } catch (e) {
+    res.status(400).json({message: (e as Error).message})
+  }
+});
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
