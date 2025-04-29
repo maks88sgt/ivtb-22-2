@@ -38,25 +38,34 @@ const router = Router()
  *                password:
  *                  type: string
  *                  example: 12345
+ *                role:
+ *                  type: string
+ *                  default: user
+ *                  example: user
  *      responses:
  *        201:
  *          description: Успешный ответ
  *          content:
  *            application/json:
  *             schema:
- *                type: array
- *                items:
- *                  type: object
- *                  properties:
- *                    _id:
- *                      type: string
- *                      example: 67f4c70441b7447c466a53ab
- *                    username:
- *                      type: string
- *                      example: John Doe
- *                    email:
- *                      type: string
- *                      example: johndoe@mail.com
+ *                type: object
+ *                properties:
+ *                  user: 
+ *                    type: object
+ *                    properties:
+ *                      _id:
+ *                        type: string
+ *                        example: 67f4c70441b7447c466a53ab
+ *                      username:
+ *                        type: string
+ *                        example: John Doe
+ *                      email:
+ *                        type: string
+ *                        example: johndoe@mail.com
+ *                  token: 
+ *                    type: string
+ *                  message:
+ *                    type: string         
  *        400:
  *          description: Ответ с ошибкой
  *          content:

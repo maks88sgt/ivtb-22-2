@@ -8,6 +8,15 @@ const swaggerDefinition = {
     version: "1.0.1",
     description: "API documentation for my express.js",
   },
+  components: {
+    securitySchemes:{
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT"
+      }
+    }
+  }
 };
 
 const options = {
