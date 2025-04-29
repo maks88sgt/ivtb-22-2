@@ -12,6 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 connectDB()
 
+app.get("/",(req, res)=>{
+  res.status(200).json({message: "Server is running!!!!!!!"})
+})
+
 app.use("/users", usersRouter)
 app.use("/auth", authRouter)
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec))
