@@ -2,34 +2,36 @@ import type { Response, Request } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import {JWT_SECRET} from "../config/constants";
+import { JWT_SECRET } from "../config/constants";
 
 export const signIn = async (req: Request, res: Response) => {
-    const { username, password } = req.body;
-    const existingUser = await User.findOne({ username });
+  const { username, password } = req.body;
+  const existingUser = await User.findOne({ username });
 
-    if (!existingUser) {
-        res.status(400).json({ message: "Username or password is incorrect" });
-        return;
-      }
+  if (!existingUser) {
+    res.status(404).json({ message: "Username or password is incorrect" });
+    return
+  }
 
-    const result = await bcrypt.compare(password, existingUser.password);  
+  const result = await bcrypt.compare(password, existingUser.password);
 
-    console.log(result, password, existingUser.password)
-
-    if(!result){
-        res.status(400).json({ message: "Username or password is incorrect" });
-        return;
-    } else {
-      const userResponse = {username: existingUser.username, email: existingUser.email, role: existingUser.role}
-
-      const token = jwt.sign(userResponse, JWT_SECRET)
-    
-      res.status(200).json({user: userResponse, token, message: "Sign-in successfully"});
+  if (!result) {
+    res.status(401).json({ message: "Username or password is incorrect" });
     return;
-    }
+  } else {
+    const userResponse = {
+      username: existingUser.username,
+      email: existingUser.email,
+      role: existingUser.role,
+    };
 
+    const token = jwt.sign(userResponse, JWT_SECRET);
 
+    res
+      .status(200)
+      .json({ user: userResponse, token, message: "Sign-in successfully" });
+    return;
+  }
 };
 
 export const signUp = async (req: Request, res: Response) => {
@@ -47,10 +49,15 @@ export const signUp = async (req: Request, res: Response) => {
   const user = new User({ username, email, password: encryptedPassword, role });
   await user.save();
 
-  const userResponse = {username: user.username, email: user.email, role: user.role}
+  const userResponse = {
+    username: user.username,
+    email: user.email,
+    role: user.role,
+  };
 
-  const token = jwt.sign(userResponse, JWT_SECRET)
+  const token = jwt.sign(userResponse, JWT_SECRET);
 
-  res.status(201).json({user: userResponse, token, message: "Sign-up successfully"});
-
+  res
+    .status(201)
+    .json({ user: userResponse, token, message: "Sign-up successfully" });
 };
